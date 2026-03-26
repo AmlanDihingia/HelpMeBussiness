@@ -1,3 +1,7 @@
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
+
 export default function SuccessPage() {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white p-6">
@@ -5,36 +9,34 @@ export default function SuccessPage() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-cyan/10 rounded-full blur-[120px]" />
             </div>
 
-            <div className="max-w-3xl w-full flex flex-col items-center text-center space-y-8 animate-in slide-in-from-bottom-8 duration-700">
-                <div className="w-20 h-20 bg-brand-brand-cyan/20 border border-brand-cyan/50 rounded-full flex items-center justify-center text-4xl mb-4 text-brand-cyan">
-                    ✓
+            <div className="max-w-xl w-full flex flex-col items-center text-center space-y-8 animate-in slide-in-from-bottom-8 duration-700">
+                <div className="w-20 h-20 bg-brand-cyan/20 border border-brand-cyan/50 rounded-full flex items-center justify-center text-4xl mb-4 text-brand-cyan">
+                    <CheckCircle2 size={40} />
                 </div>
 
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Payment Successful!</h1>
-                <p className="text-xl text-zinc-400 max-w-xl">
-                    We've received your ₹999 investment. You've officially taken the first critical step towards business clarity.
-                </p>
-
-                <div className="w-full glass-card p-6 md:p-10 rounded-3xl mt-8">
-                    <h2 className="text-2xl font-bold mb-6 text-white">Schedule Your Spark Call</h2>
-                    <p className="text-zinc-400 mb-8">
-                        Please pick a time below for your 30-minute 1:1 strategy session.
+                <div className="space-y-4">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Booking Confirmed!</h1>
+                    <p className="text-xl text-zinc-400 max-w-xl">
+                        Your ₹999 investment is received. You&apos;ve successfully scheduled your Clarity Session. 
                     </p>
-
-                    <div className="aspect-video w-full rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center relative">
-                        {/* Embed Calendly here. Using iframe for quick embed. */}
-                        <iframe
-                            src="https://calendly.com/nexversestudios/spark-call-clarity-session"
-                            width="100%"
-                            height="100%"
-                            frameBorder="0"
-                            className="absolute inset-0 w-full h-full"
-                        />
-                        {/* Fallback visual if iframe fails/takes time */}
-                        <div className="text-zinc-600 text-sm absolute -z-10">Loading Calendar...</div>
-                    </div>
                 </div>
 
+                <div className="w-full glass-card p-8 rounded-3xl border border-white/10 space-y-6">
+                    <p className="text-zinc-400">
+                        Check your email for the meeting invite and preparation details. We look forward to helping you build your business with precision.
+                    </p>
+                    
+                    <Link href="/" className="block">
+                        <Button variant="primary" size="lg" className="w-full group">
+                            Return to Homepage
+                            <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                    </Link>
+                </div>
+
+                <p className="text-zinc-500 text-sm">
+                    Have questions? Contact us at support@helpmebusiness.com
+                </p>
             </div>
         </div>
     );

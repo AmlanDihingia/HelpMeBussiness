@@ -37,7 +37,7 @@ export default function Home() {
           <a href="#services" className="hover:text-white transition-colors">Services</a>
         </nav>
         <div className="flex items-center gap-2">
-          <Button variant="primary" size="sm" onClick={() => setIsConsultationOpen(true)}>Get Free Consultation</Button>
+          <Button variant="primary" size="sm" onClick={() => setIsConsultationOpen(true)}>Validate Your Business</Button>
         </div>
       </header>
 
@@ -65,7 +65,7 @@ export default function Home() {
               size="lg"
               className="w-full sm:w-auto"
             >
-              Get a Free Consultation
+              Validate Your Business
             </Button>
             <Button
               onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}

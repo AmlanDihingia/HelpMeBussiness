@@ -94,7 +94,7 @@ export function FreeConsultationForm({ onClose }: { onClose: () => void }) {
                     </div>
                     <h2 className="text-xl md:text-2xl font-bold text-white mb-2" id="success-message">Request Received!</h2>
                     <p className="text-zinc-400 text-sm leading-relaxed mb-6 md:mb-8">
-                        Thank you for sharing your business details. Our expert team will review your information and contact you shortly to schedule your free consultation.
+                        Thank you for sharing your business details. Our expert team will review your information and contact you shortly to schedule your business validation call.
                     </p>
                     <button onClick={onClose} className="w-full py-3.5 rounded-2xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 transition-all">
                         Return to site

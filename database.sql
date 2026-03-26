@@ -74,3 +74,11 @@ CREATE TABLE IF NOT EXISTS public.orders (
 -- ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS risk_appetite TEXT;
 -- ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS location TEXT;
 -- ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS skills TEXT;
+
+-- NEW FIELDS FOR SparkQuiz Redesign
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS business_name TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS business_type TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS vintage TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS turnover TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS challenge TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS details TEXT;

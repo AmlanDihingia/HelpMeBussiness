@@ -3,11 +3,19 @@
 import { supabase } from '@/utils/supabase';
 
 interface IntakeData {
-    capital: string;
-    time: string;
-    risk: string;
-    location: string;
-    skills: string;
+    businessName: string;
+    businessEmail: string;
+    businessType: string;
+    vintage: string;
+    turnover: string;
+    challenge: string;
+    details: string;
+    // Legacy fields (keep for backwards compatibility)
+    capital?: string;
+    time?: string;
+    risk?: string;
+    location?: string;
+    skills?: string;
 }
 
 export async function submitOrderAction(formData: FormData, intakeData: IntakeData) {
@@ -20,7 +28,7 @@ export async function submitOrderAction(formData: FormData, intakeData: IntakeDa
     // Step 1 — Insert Lead
     const { data: leadData, error: leadError } = await supabase
         .from('leads')
-        .insert([{ full_name: fullName, email, phone }])
+        .insert([{ full_name: fullName, email, phone: phone || '' }])
         .select()
         .single();
 
@@ -29,18 +37,26 @@ export async function submitOrderAction(formData: FormData, intakeData: IntakeDa
         return { success: false, error: leadError.message };
     }
 
-    // Step 2 — Try inserting with explicit intake columns (requires ALTER TABLE to have been run).
-    // If that fails due to missing columns, fall back to JSONB-only insert.
+    // Step 2 — Insert order with new business fields
     const fullOrderPayload = {
         lead_id: leadData.id,
         service_name: serviceName,
         amount: amount,
         payment_status: 'success',
-        capital: intakeData.capital,
-        time_commitment: intakeData.time,
-        risk_appetite: intakeData.risk,
-        location: intakeData.location,
-        skills: intakeData.skills,
+        // New business fields
+        business_name: intakeData.businessName,
+        business_type: intakeData.businessType,
+        vintage: intakeData.vintage,
+        turnover: intakeData.turnover,
+        challenge: intakeData.challenge,
+        details: intakeData.details,
+        // Legacy fields (may or may not exist)
+        capital: intakeData.capital || null,
+        time_commitment: intakeData.time || null,
+        risk_appetite: intakeData.risk || null,
+        location: intakeData.location || null,
+        skills: intakeData.skills || null,
+        // Full intake snapshot as JSON backup
         intake_responses: intakeData,
     };
 
