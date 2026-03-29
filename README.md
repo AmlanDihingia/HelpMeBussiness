@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HelpMeBussiness
 
-## Getting Started
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-92.8%25-blue)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-success)
 
-First, run the development server:
+A professional business assistance platform built with TypeScript, providing solutions for modern business challenges.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🔗 **Live Demo**: [https://help-me-bussiness.vercel.app](https://help-me-bussiness.vercel.app)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📋 Table of Contents
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [API Documentation](#api-documentation)
+- [Database Schema](#database-schema)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## ✨ Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **[Feature 1]**: Description of key feature
+- **[Feature 2]**: Description of key feature
+- **[Feature 3]**: Description of key feature
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Type-Safe**: Full TypeScript implementation for reliability
+- **Production Ready**: Deployed and monitored
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🛠️ Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Category | Technologies |
+|----------|---------------|
+| **Frontend** | TypeScript (92.8%), CSS (3.9%), React/Next.js |
+| **Backend** | Node.js, Express/API Routes |
+| **Database** | PostgreSQL (PLpgSQL - 2.7%) |
+| **Deployment** | Vercel |
+| **Package Manager** | npm / yarn |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** (v16.0.0 or higher)
+- **npm** or **yarn** package manager
+- **PostgreSQL** (v12 or higher)
+- **Git**
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AmlanDihingia/HelpMeBussiness.git
+   cd HelpMeBussiness
