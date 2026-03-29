@@ -200,22 +200,22 @@ const highTicketServices = [
 
 const colorMap: Record<string, { accent: string; badge: string; check: string; liquidClass: string }> = {
     cyan: {
-        accent: 'text-cyan-400',
-        badge: 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20',
-        check: 'text-cyan-400',
-        liquidClass: 'liquid-card liquid-card-cyan',
+        accent: 'text-cyan-600',
+        badge: 'bg-cyan-600/10 text-cyan-700 border border-cyan-600/20',
+        check: 'text-cyan-600',
+        liquidClass: 'bg-white/80 backdrop-blur-md shadow-sm border border-cyan-200 hover:border-cyan-300',
     },
     blue: {
-        accent: 'text-blue-400',
-        badge: 'bg-blue-400/10 text-blue-400 border border-blue-400/20',
-        check: 'text-blue-400',
-        liquidClass: 'liquid-card liquid-card-blue',
+        accent: 'text-blue-600',
+        badge: 'bg-blue-600/10 text-blue-700 border border-blue-600/20',
+        check: 'text-blue-600',
+        liquidClass: 'bg-white/80 backdrop-blur-md shadow-sm border border-blue-200 hover:border-blue-300',
     },
     white: {
-        accent: 'text-amber-400',
-        badge: 'bg-amber-400/10 text-amber-400 border border-amber-400/20',
-        check: 'text-amber-400',
-        liquidClass: 'liquid-card liquid-card-white',
+        accent: 'text-amber-600',
+        badge: 'bg-amber-600/10 text-amber-700 border border-amber-600/20',
+        check: 'text-amber-600',
+        liquidClass: 'bg-white/80 backdrop-blur-md shadow-sm border border-amber-200 hover:border-amber-300',
     },
 };
 
@@ -240,7 +240,7 @@ function ServiceCard({ service, onQuizOpen }: { service: ServiceData; onQuizOpen
 
     return (
         <div
-            className={`${c.liquidClass} rounded-3xl p-7 relative overflow-hidden group transition-all duration-300 flex flex-col hover:scale-[1.01] hover:shadow-2xl`}
+            className={`${c.liquidClass} rounded-3xl p-7 relative overflow-hidden group transition-all duration-300 flex flex-col hover:scale-[1.01] hover:shadow-lg`}
             style={{ transform: 'translateZ(0)' }}
         >
             {/* Liquid glass overlay is handled via ::before CSS pseudo-element */}
@@ -249,9 +249,8 @@ function ServiceCard({ service, onQuizOpen }: { service: ServiceData; onQuizOpen
                 {/* Header */}
                 <div className="flex items-start justify-between mb-5">
                     <div>
-                        <span className={`text-xs font-mono font-bold tracking-widest ${c.accent} opacity-50`}>{service.number}</span>
                         <h3 className="text-xl font-bold mt-1 leading-tight">{service.name}</h3>
-                        {service.subtitle && <p className="text-zinc-500 text-xs mt-0.5">{service.subtitle}</p>}
+                        {service.subtitle && <p className="text-zinc-600 text-xs mt-0.5">{service.subtitle}</p>}
                     </div>
                     <span className={`text-2xl font-extrabold ${c.accent} shrink-0 ml-4`}>{service.price}</span>
                 </div>
@@ -264,10 +263,10 @@ function ServiceCard({ service, onQuizOpen }: { service: ServiceData; onQuizOpen
                 {/* What We Do */}
                 {service.whatWeDo.length > 0 && (
                     <div className="mb-4">
-                        <p className="text-xs uppercase tracking-wider text-zinc-500 font-semibold mb-2">What We Do</p>
+                        <p className="text-xs uppercase tracking-wider text-zinc-600 font-semibold mb-2">What We Do</p>
                         <ul className="space-y-2">
                             {service.whatWeDo.map((item, i) => (
-                                <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+                                <li key={i} className="flex items-start gap-2 text-sm text-zinc-700">
                                     <span className={`shrink-0 mt-0.5 ${c.check}`}>✓</span>
                                     {item}
                                 </li>
@@ -281,18 +280,18 @@ function ServiceCard({ service, onQuizOpen }: { service: ServiceData; onQuizOpen
                     {service.whatWeDo.length > 0 ? (
                         <button
                             onClick={() => setExpanded(!expanded)}
-                            className="flex items-center gap-1 text-xs uppercase tracking-wider text-zinc-500 font-semibold mb-2 hover:text-white transition-colors"
+                            className="flex items-center gap-1 text-xs uppercase tracking-wider text-zinc-600 font-semibold mb-2 hover:text-zinc-900 transition-colors"
                         >
                             What You Get
                             <span className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}>&#9662;</span>
                         </button>
                     ) : (
-                        <p className="text-xs uppercase tracking-wider text-zinc-500 font-semibold mb-2">What You Get</p>
+                        <p className="text-xs uppercase tracking-wider text-zinc-600 font-semibold mb-2">What You Get</p>
                     )}
                     {(expanded || service.whatWeDo.length === 0) && (
                         <ul className="space-y-2 mb-5">
                             {service.whatYouGet.map((item, i) => (
-                                <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+                                <li key={i} className="flex items-start gap-2 text-sm text-zinc-700">
                                     <span className={`shrink-0 mt-0.5 ${c.check}`}>&#8594;</span>
                                     {item}
                                 </li>
@@ -302,7 +301,7 @@ function ServiceCard({ service, onQuizOpen }: { service: ServiceData; onQuizOpen
                 </div>
 
                 {/* Tagline */}
-                <p className="text-xs italic text-zinc-500 mb-5 border-l-2 border-zinc-700 pl-3">{service.tagline}</p>
+                <p className="text-xs italic text-zinc-600 mb-5 border-l-2 border-zinc-300 pl-3">{service.tagline}</p>
 
                 {/* CTA */}
                 <Button
@@ -322,19 +321,19 @@ export function ServicesSection({ onQuizOpen }: { onQuizOpen: () => void }) {
         <section id="services" className="w-full max-w-7xl space-y-16 md:space-y-24">
             <div className="text-center space-y-4">
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Services We Offer</h2>
-                <p className="text-zinc-400 text-base md:text-lg max-w-xl mx-auto">From idea to income — every step of the journey.</p>
+                <p className="text-zinc-600 text-base md:text-lg max-w-xl mx-auto">From idea to income — every step of the journey.</p>
             </div>
 
             {/* Stage 1: Clarity */}
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
                     <div>
-                        <div className="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-1">Stage 1</div>
+                        <div className="text-xs uppercase tracking-widest text-cyan-500 font-bold mb-1">Stage 1</div>
                         <h3 className="text-2xl md:text-3xl font-bold">Clarity Services</h3>
-                        <p className="text-zinc-400 text-sm mt-1">Low commitment. High value. Zero pressure.</p>
+                        <p className="text-zinc-600 text-sm mt-1">Low commitment. High value. Zero pressure.</p>
                     </div>
-                    <div className="flex-1 h-px bg-zinc-800 ml-6 hidden md:block" />
-                    <span className="text-cyan-400 font-bold text-lg hidden md:block shrink-0">₹999 each</span>
+                    <div className="flex-1 h-px bg-zinc-200 ml-6 hidden md:block" />
+                    <span className="text-cyan-500 font-bold text-lg hidden md:block shrink-0">₹999 each</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {clarityServices.map((s) => (
@@ -347,12 +346,12 @@ export function ServicesSection({ onQuizOpen }: { onQuizOpen: () => void }) {
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
                     <div>
-                        <div className="text-xs uppercase tracking-widest text-blue-400 font-bold mb-1">Stage 2</div>
+                        <div className="text-xs uppercase tracking-widest text-blue-500 font-bold mb-1">Stage 2</div>
                         <h3 className="text-2xl md:text-3xl font-bold">Build &amp; Launch Services</h3>
-                        <p className="text-zinc-400 text-sm mt-1">Once clarity is achieved, we help you build.</p>
+                        <p className="text-zinc-600 text-sm mt-1">Once clarity is achieved, we help you build.</p>
                     </div>
-                    <div className="flex-1 h-px bg-zinc-800 ml-6 hidden md:block" />
-                    <span className="text-blue-400 font-bold text-lg hidden md:block shrink-0">₹4,999 – ₹12,999</span>
+                    <div className="flex-1 h-px bg-zinc-200 ml-6 hidden md:block" />
+                    <span className="text-blue-500 font-bold text-lg hidden md:block shrink-0">₹4,999 – ₹12,999</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                     {buildServices.map((s) => (
@@ -365,12 +364,12 @@ export function ServicesSection({ onQuizOpen }: { onQuizOpen: () => void }) {
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
                     <div>
-                        <div className="text-xs uppercase tracking-widest text-white font-bold mb-1">Stage 3</div>
+                        <div className="text-xs uppercase tracking-widest text-zinc-900 font-bold mb-1">Stage 3</div>
                         <h3 className="text-2xl md:text-3xl font-bold">Consulting &amp; Done-With-You Packages</h3>
-                        <p className="text-zinc-400 text-sm mt-1">For people serious about execution.</p>
+                        <p className="text-zinc-600 text-sm mt-1">For people serious about execution.</p>
                     </div>
-                    <div className="flex-1 h-px bg-zinc-800 ml-6 hidden md:block" />
-                    <span className="text-white font-bold text-lg hidden md:block shrink-0">₹24,999 – ₹34,999</span>
+                    <div className="flex-1 h-px bg-zinc-200 ml-6 hidden md:block" />
+                    <span className="text-zinc-900 font-bold text-lg hidden md:block shrink-0">₹24,999 – ₹34,999</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {highTicketServices.map((s) => (

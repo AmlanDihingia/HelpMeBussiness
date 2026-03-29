@@ -28,13 +28,13 @@ export default function Home() {
             alt="HelpMeBusiness Logo"
             width={160}
             height={50}
-            className="h-10 w-auto object-contain brightness-110"
+            className="h-10 w-auto object-contain"
             priority
           />
         </div>
 
-        <nav className="hidden md:flex gap-6 text-sm font-medium text-zinc-400">
-          <a href="#services" className="hover:text-white transition-colors">Services</a>
+        <nav className="hidden md:flex gap-6 text-sm font-medium text-zinc-600">
+          <a href="#services" className="hover:text-zinc-900 transition-colors">Services</a>
         </nav>
         <div className="flex items-center gap-2">
           <Button variant="primary" size="sm" onClick={() => setIsConsultationOpen(true)}>Validate Your Business</Button>
@@ -50,8 +50,8 @@ export default function Home() {
             <span className="text-gradient">We bring the clarity.</span>
           </h1>
 
-          <p className="text-lg md:text-xl lg:text-2xl text-zinc-400 max-w-2xl mx-auto font-light leading-relaxed">
-            Before you invest ₹1 lakh, invest <strong className="text-white">₹999</strong> in clarity. Stop guessing and start building with precision.
+          <p className="text-lg md:text-xl lg:text-2xl text-zinc-600 max-w-2xl mx-auto font-light leading-relaxed">
+            Before you invest ₹1 lakh, invest <strong className="text-zinc-900">₹999</strong> in clarity. Stop guessing and start building with precision.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 flex-wrap">

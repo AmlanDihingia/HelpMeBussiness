@@ -19,7 +19,7 @@
   </g>
 
   <!-- HELP ME BUSINESS text -->
-  <text x="165" y="58" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#B8CBD8" letter-spacing="2">HELP</text>
-  <text x="165" y="100" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#B8CBD8" letter-spacing="2">ME</text>
-  <text x="165" y="142" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#B8CBD8" letter-spacing="1">BUSINESS</text>
+  <text x="165" y="58" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#1F2937" letter-spacing="2">HELP</text>
+  <text x="165" y="100" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#1F2937" letter-spacing="2">ME</text>
+  <text x="165" y="142" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1F2937" letter-spacing="1">BUSINESS</text>
 </svg>

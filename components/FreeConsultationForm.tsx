@@ -80,23 +80,23 @@ export function FreeConsultationForm({ onClose }: { onClose: () => void }) {
     };
 
     const inputClass = (field: string) =>
-        `w-full bg-white/5 border ${errors[field] ? 'border-red-500/70' : 'border-white/10'} rounded-2xl px-4 py-3 md:py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-purple-400/60 focus:bg-white/8 transition-all duration-200 text-sm`;
+        `w-full bg-white border ${errors[field] ? 'border-red-500' : 'border-zinc-300'} rounded-2xl px-4 py-3 md:py-3.5 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 text-sm shadow-sm`;
 
-    const labelClass = "block text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5";
+    const labelClass = "block text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5";
 
     if (isSuccess) {
         return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-                <div className="w-full max-w-md bg-[#0d0d0d] rounded-3xl border border-white/8 shadow-2xl p-6 md:p-8 text-center relative">
-                    <button onClick={onClose} className="absolute right-6 top-6 text-zinc-500 hover:text-white"><X size={20} /></button>
-                    <div className="w-16 h-16 bg-purple-400/15 border border-purple-400/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle2 className="text-purple-400 w-8 h-8" />
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
+                <div className="w-full max-w-md bg-white rounded-3xl border border-zinc-200 shadow-xl p-6 md:p-8 text-center relative">
+                    <button onClick={onClose} className="absolute right-6 top-6 text-zinc-400 hover:text-zinc-700"><X size={20} /></button>
+                    <div className="w-16 h-16 bg-purple-50 border border-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <CheckCircle2 className="text-purple-500 w-8 h-8" />
                     </div>
-                    <h2 className="text-xl md:text-2xl font-bold text-white mb-2" id="success-message">Request Received!</h2>
-                    <p className="text-zinc-400 text-sm leading-relaxed mb-6 md:mb-8">
+                    <h2 className="text-xl md:text-2xl font-bold text-zinc-900 mb-2" id="success-message">Request Received!</h2>
+                    <p className="text-zinc-600 text-sm leading-relaxed mb-6 md:mb-8">
                         Thank you for sharing your business details. Our expert team will review your information and contact you shortly to schedule your business validation call.
                     </p>
-                    <button onClick={onClose} className="w-full py-3.5 rounded-2xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 transition-all">
+                    <button onClick={onClose} className="w-full py-3.5 rounded-2xl bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 text-sm font-semibold hover:bg-zinc-800 transition-all">
                         Return to site
                     </button>
                 </div>
@@ -105,10 +105,10 @@ export function FreeConsultationForm({ onClose }: { onClose: () => void }) {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <div className="w-full max-w-2xl bg-[#0d0d0d] rounded-3xl border border-white/8 shadow-2xl flex flex-col max-h-[90dvh] md:max-h-[90vh] overflow-hidden transition-all duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-md">
+            <div className="w-full max-w-2xl bg-white rounded-3xl border border-zinc-200 shadow-xl flex flex-col max-h-[90dvh] md:max-h-[90vh] overflow-hidden transition-all duration-300">
                 {/* Progress Bar */}
-                <div className="h-0.5 bg-white/5 flex-shrink-0">
+                <div className="h-0.5 bg-zinc-100 flex-shrink-0">
                     <div className="h-full bg-gradient-to-r from-purple-400 to-pink-500 transition-all duration-500 ease-out" style={{ width: `${(step / 2) * 100}%` }} />
                 </div>
 
@@ -118,21 +118,21 @@ export function FreeConsultationForm({ onClose }: { onClose: () => void }) {
                         <div className="flex items-center gap-1.5 mb-2">
                             {steps.map((s, i) => (
                                 <div key={s.id} className="flex items-center gap-1">
-                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${step > s.id ? 'bg-purple-400 text-black' : step === s.id ? 'bg-white text-black' : 'bg-white/10 text-zinc-500'}`}>
+                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${step > s.id ? 'bg-purple-500 text-white' : step === s.id ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-400'}`}>
                                         {step > s.id ? '✓' : s.id}
                                     </div>
-                                    {i < steps.length - 1 && <div className={`w-4 md:w-6 h-px transition-all duration-300 ${step > s.id ? 'bg-purple-400' : 'bg-white/10'}`} />}
+                                    {i < steps.length - 1 && <div className={`w-4 md:w-6 h-px transition-all duration-300 ${step > s.id ? 'bg-purple-500' : 'bg-zinc-200'}`} />}
                                 </div>
                             ))}
                         </div>
-                        <h2 className="text-lg md:text-xl font-bold text-white">{steps[step - 1].title}</h2>
+                        <h2 className="text-lg md:text-xl font-bold text-zinc-900">{steps[step - 1].title}</h2>
                         <p className="text-zinc-500 text-xs md:text-sm mt-0.5">{steps[step - 1].description}</p>
                     </div>
-                    <button onClick={onClose} id="close-consultation" className="p-2 hover:bg-white/8 rounded-xl transition-colors text-zinc-500 hover:text-white flex-shrink-0 ml-4"><X size={18} /></button>
+                    <button onClick={onClose} id="close-consultation" className="p-2 hover:bg-zinc-100 rounded-xl transition-colors text-zinc-400 hover:text-zinc-700 flex-shrink-0 ml-4"><X size={18} /></button>
                 </div>
 
                 {/* Body */}
-                <div className="flex-1 overflow-y-auto px-5 md:px-6 pb-4 scrollbar-thin scrollbar-thumb-white/10">
+                <div className="flex-1 overflow-y-auto px-5 md:px-6 pb-4 scrollbar-thin scrollbar-thumb-zinc-200">
                     {/* Step 1: Business Profile (The 8 Fields) */}
                     {step === 1 && (
                         <div className="space-y-4 md:space-y-5 py-2">
@@ -208,8 +208,8 @@ export function FreeConsultationForm({ onClose }: { onClose: () => void }) {
                                 {errors.longTermGoal && <p className="text-red-400 text-xs mt-1 ml-1">{errors.longTermGoal}</p>}
                             </div>
 
-                            <div className="bg-purple-400/5 border border-purple-400/20 rounded-2xl p-4">
-                                <p className="text-zinc-300 text-[10px] md:text-xs leading-relaxed text-center">
+                            <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+                                <p className="text-zinc-600 text-[10px] md:text-xs leading-relaxed text-center">
                                     Your data is securely stored and exclusively used by our experts.
                                 </p>
                             </div>
@@ -224,19 +224,19 @@ export function FreeConsultationForm({ onClose }: { onClose: () => void }) {
                 </div>
 
                 {/* Footer */}
-                <div className="px-5 md:px-6 py-4 border-t border-white/6 flex gap-2 md:gap-3 flex-shrink-0 bg-[#0d0d0d]">
+                <div className="px-5 md:px-6 py-4 border-t border-zinc-200 flex gap-2 md:gap-3 flex-shrink-0 bg-zinc-50">
                     {step > 1 && (
-                        <button onClick={handleBack} className="flex items-center gap-2 px-4 md:px-5 py-3 rounded-2xl border border-white/10 text-zinc-400 hover:text-white hover:border-white/20 transition-all text-sm font-medium">
+                        <button onClick={handleBack} className="flex items-center gap-2 px-4 md:px-5 py-3 rounded-2xl border border-zinc-300 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-all text-sm font-medium">
                             <ArrowLeft size={15} className="md:block hidden" /> Back
                         </button>
                     )}
 
                     {step < 2 ? (
-                        <button id="next-step" onClick={handleNext} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 active:scale-95 transition-all duration-200">
+                        <button id="next-step" onClick={handleNext} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 text-sm font-semibold hover:bg-zinc-800 active:scale-95 transition-all duration-200">
                             Continue <ArrowRight size={15} />
                         </button>
                     ) : (
-                        <button id="submit-consultation" onClick={handleSubmit} disabled={isLoading} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-purple-400 to-pink-500 text-white text-sm font-bold hover:opacity-90 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none">
+                        <button id="submit-consultation" onClick={handleSubmit} disabled={isLoading} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-600 shadow-lg shadow-purple-500/30 text-white text-sm font-bold hover:opacity-90 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none">
                             {isLoading ? (
                                 <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</>
                             ) : (

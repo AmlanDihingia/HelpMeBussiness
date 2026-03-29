@@ -80,14 +80,14 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
     };
 
     const inputClass = (field: string) =>
-        `w-full bg-white/5 border ${errors[field] ? 'border-red-500/70' : 'border-white/10'} rounded-2xl px-4 py-3 md:py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400/60 focus:bg-white/8 transition-all duration-200 text-sm`;
+        `w-full bg-white border ${errors[field] ? 'border-red-500' : 'border-zinc-300'} rounded-2xl px-4 py-3 md:py-3.5 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all duration-200 text-sm shadow-sm`;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-            <div className="w-full max-w-lg bg-[#0d0d0d] rounded-3xl border border-white/8 shadow-2xl flex flex-col max-h-[90dvh] md:max-h-[90vh] overflow-hidden transition-all duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
+            <div className="w-full max-w-lg bg-white rounded-3xl border border-zinc-200 shadow-xl flex flex-col max-h-[90dvh] md:max-h-[90vh] overflow-hidden transition-all duration-300">
 
                 {/* Progress Bar */}
-                <div className="h-0.5 bg-white/5 flex-shrink-0">
+                <div className="h-0.5 bg-zinc-100 flex-shrink-0">
                     <div
                         className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-500 ease-out"
                         style={{ width: `${(step / 4) * 100}%` }}
@@ -100,21 +100,21 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                         <div className="flex items-center gap-1.5 mb-1.5 md:mb-2">
                             {steps.map((s, i) => (
                                 <div key={s.id} className="flex items-center gap-1">
-                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${step > s.id ? 'bg-cyan-400 text-black' : step === s.id ? 'bg-white text-black' : 'bg-white/10 text-zinc-500'}`}>
+                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${step > s.id ? 'bg-cyan-500 text-white' : step === s.id ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-400'}`}>
                                         {step > s.id ? '✓' : s.id}
                                     </div>
                                     {i < steps.length - 1 && (
-                                        <div className={`w-3 md:w-5 h-px transition-all duration-300 ${step > s.id ? 'bg-cyan-400' : 'bg-white/10'}`} />
+                                        <div className={`w-3 md:w-5 h-px transition-all duration-300 ${step > s.id ? 'bg-cyan-500' : 'bg-zinc-200'}`} />
                                     )}
                                 </div>
                             ))}
                         </div>
-                        <h2 className="text-base md:text-lg font-bold text-white">{steps[step - 1].title}</h2>
+                        <h2 className="text-base md:text-lg font-bold text-zinc-900">{steps[step - 1].title}</h2>
                         <p className="text-zinc-500 text-[10px] md:text-xs mt-0.5">{steps[step - 1].description}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-white/8 rounded-xl transition-colors text-zinc-500 hover:text-white flex-shrink-0 ml-4"
+                        className="p-2 hover:bg-zinc-100 rounded-xl transition-colors text-zinc-400 hover:text-zinc-700 flex-shrink-0 ml-4"
                     >
                         <X size={18} />
                     </button>
@@ -127,7 +127,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                     {step === 1 && (
                         <div className="space-y-3.5 md:space-y-4">
                             <div>
-                                <label className="block text-[10px] md:text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5">
+                                <label className="block text-[10px] md:text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5">
                                     <Building2 size={12} className="text-cyan-400" /> Business Name
                                 </label>
                                 <div className="relative">
@@ -145,7 +145,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] md:text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5">
+                                <label className="block text-[10px] md:text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5">
                                     <Mail size={12} className="text-cyan-400" /> Business Email
                                 </label>
                                 <div className="relative">
@@ -162,7 +162,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] md:text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5">
+                                <label className="block text-[10px] md:text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5">
                                     <Briefcase size={12} className="text-cyan-400" /> Type of Business
                                 </label>
                                 <div className="grid grid-cols-2 gap-2">
@@ -171,7 +171,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                                             key={opt}
                                             type="button"
                                             onClick={() => setFormData({ ...formData, businessType: opt })}
-                                            className={`p-3.5 rounded-2xl border text-sm font-semibold text-center transition-all duration-200 ${formData.businessType === opt ? 'border-cyan-400/60 bg-cyan-400/10 text-cyan-400' : 'border-white/10 bg-white/3 text-zinc-400 hover:border-white/20 hover:text-zinc-300'}`}
+                                            className={`p-3.5 rounded-2xl border text-sm font-semibold text-center transition-all duration-200 ${formData.businessType === opt ? 'border-cyan-400/60 bg-cyan-400/10 text-cyan-400' : 'border-white/10 bg-white/3 text-zinc-600 hover:border-white/20 hover:text-zinc-300'}`}
                                         >
                                             {opt === 'Product' ? '📦' : '🛠️'} {opt}
                                         </button>
@@ -180,9 +180,9 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                                 {errors.businessType && <p className="text-red-400 text-[10px] md:text-xs mt-1.5 ml-1">{errors.businessType}</p>}
                             </div>
 
-                            <div className="bg-white/3 border border-white/6 rounded-2xl p-4 mt-2">
-                                <p className="text-zinc-400 text-[10px] md:text-xs leading-relaxed">
-                                    <span className="text-cyan-400 font-medium">🔒 100% Private.</span> Your business details are only used to personalise your clarity session.
+                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 mt-2">
+                                <p className="text-zinc-600 text-[10px] md:text-xs leading-relaxed">
+                                    <span className="text-cyan-600 font-medium">🔒 100% Private.</span> Your business details are only used to personalise your clarity session.
                                 </p>
                             </div>
                         </div>
@@ -193,7 +193,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                         <div className="space-y-3.5 md:space-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-[10px] md:text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5">
+                                    <label className="block text-[10px] md:text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5">
                                         <Calendar size={12} className="text-cyan-400" /> Business Vintage
                                     </label>
                                     <input
@@ -207,7 +207,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                                     {errors.vintage && <p className="text-red-400 text-[10px] md:text-xs mt-1.5 ml-1">{errors.vintage}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] md:text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5">
+                                    <label className="block text-[10px] md:text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5">
                                         <TrendingUp size={12} className="text-cyan-400" /> Yearly Turnover
                                     </label>
                                     <input
@@ -222,7 +222,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] md:text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5">
+                                <label className="block text-[10px] md:text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5">
                                     <AlertCircle size={12} className="text-cyan-400" /> Main Challenge
                                 </label>
                                 <input
@@ -236,7 +236,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] md:text-xs font-medium text-zinc-400 mb-1.5 ml-1 flex items-center gap-1.5">
+                                <label className="block text-[10px] md:text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5">
                                     <FileText size={12} className="text-cyan-400" /> More Details About Your Business
                                 </label>
                                 <textarea
@@ -254,11 +254,11 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                     {step === 3 && (
                         <div className="space-y-4">
                             <div className="text-center pb-2">
-                                <p className="text-zinc-400 text-xs md:text-sm leading-relaxed">
+                                <p className="text-zinc-600 text-xs md:text-sm leading-relaxed">
                                     Pick a time slot for your <span className="text-cyan-400 font-semibold">30-min 1:1 Clarity Session</span>
                                 </p>
                             </div>
-                            <div className="w-full rounded-2xl overflow-hidden bg-zinc-900/50 border border-white/8" style={{ height: '380px' }}>
+                            <div className="w-full rounded-2xl overflow-hidden bg-white border border-zinc-200 shadow-sm" style={{ height: '380px' }}>
                                 <iframe
                                     src="https://calendly.com/nexversestudios/spark-call-clarity-session"
                                     width="100%"
@@ -268,7 +268,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                                     title="Schedule Meeting"
                                 />
                             </div>
-                            <div className="bg-white/3 border border-white/6 rounded-2xl p-3">
+                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-3">
                                 <p className="text-zinc-500 text-[10px] md:text-xs leading-relaxed text-center">
                                     💡 You can also schedule later — proceed to payment to lock your slot.
                                 </p>
@@ -280,11 +280,11 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                     {step === 4 && (
                         <div className="space-y-4 md:space-y-5">
                             <div className="text-center py-2 md:py-4">
-                                <div className="w-12 h-12 md:w-14 md:h-14 bg-cyan-400/15 border border-cyan-400/30 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
-                                    <CheckCircle2 className="text-cyan-400 w-6 h-6 md:w-7 md:h-7" />
+                                <div className="w-12 h-12 md:w-14 md:h-14 bg-cyan-50 border border-cyan-100 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                    <CheckCircle2 className="text-cyan-500 w-6 h-6 md:w-7 md:h-7" />
                                 </div>
-                                <h3 className="text-lg md:text-xl font-bold">You&apos;re almost there!</h3>
-                                <p className="text-zinc-400 text-xs md:text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
+                                <h3 className="text-lg md:text-xl font-bold text-zinc-900">You&apos;re almost there!</h3>
+                                <p className="text-zinc-600 text-xs md:text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
                                     Complete the ₹999 payment to confirm your clarity session.
                                 </p>
                             </div>
@@ -292,11 +292,11 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                             {/* Summary Card */}
                             <div className="bg-white/4 border border-white/8 rounded-2xl divide-y divide-white/6 text-xs md:text-sm overflow-hidden">
                                 <div className="flex justify-between px-4 py-2.5 md:py-3">
-                                    <span className="text-zinc-400">Business</span>
+                                    <span className="text-zinc-600">Business</span>
                                     <span className="text-white font-medium">{formData.businessName}</span>
                                 </div>
                                 <div className="flex justify-between px-4 py-2.5 md:py-3">
-                                    <span className="text-zinc-400">Type</span>
+                                    <span className="text-zinc-600">Type</span>
                                     <span className="text-white font-medium">{formData.businessType}</span>
                                 </div>
                                 <div className="flex justify-between px-4 py-2.5 md:py-3">
@@ -310,12 +310,12 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                             </div>
 
                             {/* Order Total */}
-                            <div className="bg-gradient-to-r from-cyan-400/10 to-blue-500/10 border border-cyan-400/20 rounded-2xl px-4 py-3 md:py-4 flex justify-between items-center">
+                            <div className="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-100 rounded-2xl px-4 py-3 md:py-4 flex justify-between items-center shadow-sm">
                                 <div>
-                                    <div className="text-xs md:text-sm font-semibold text-white">Stage 1: Clarity Session</div>
-                                    <div className="text-[10px] md:text-xs text-zinc-400 mt-0.5">30-min 1:1 Session</div>
+                                    <div className="text-xs md:text-sm font-semibold text-zinc-900">Stage 1: Clarity Session</div>
+                                    <div className="text-[10px] md:text-xs text-zinc-600 mt-0.5">30-min 1:1 Session</div>
                                 </div>
-                                <div className="text-xl md:text-2xl font-extrabold text-cyan-400">₹999</div>
+                                <div className="text-xl md:text-2xl font-extrabold text-cyan-600">₹999</div>
                             </div>
 
                             <p className="text-center text-zinc-600 text-[10px]">
@@ -326,11 +326,11 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                 </div>
 
                 {/* Footer */}
-                <div className="px-5 md:px-6 py-4 border-t border-white/6 flex gap-2 md:gap-3 flex-shrink-0 bg-[#0d0d0d]">
+                <div className="px-5 md:px-6 py-4 border-t border-zinc-200 flex gap-2 md:gap-3 flex-shrink-0 bg-zinc-50">
                     {step > 1 && (
                         <button
                             onClick={handleBack}
-                            className="flex items-center gap-2 px-3.5 py-2.5 md:px-4 md:py-3 rounded-2xl border border-white/10 text-zinc-400 hover:text-white hover:border-white/20 transition-all text-sm font-medium"
+                            className="flex items-center gap-2 px-3.5 py-2.5 md:px-4 md:py-3 rounded-2xl border border-zinc-300 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-all text-sm font-medium"
                         >
                             <ArrowLeft size={15} className="md:block hidden" /> Back
                         </button>
@@ -339,7 +339,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                     {step < 4 ? (
                         <button
                             onClick={handleNext}
-                            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 active:scale-95 transition-all duration-200"
+                            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 active:scale-95 transition-all duration-200"
                         >
                             {step === 3 ? 'Proceed to Payment' : 'Continue'} <ArrowRight size={15} />
                         </button>
@@ -347,7 +347,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                         <button
                             onClick={handlePayment}
                             disabled={isLoading}
-                            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 text-black text-sm font-bold hover:opacity-90 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+                            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30 text-white text-sm font-bold hover:opacity-90 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
                         >
                             {isLoading ? (
                                 <>
