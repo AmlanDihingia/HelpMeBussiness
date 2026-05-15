@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
   const groqApiKey = Deno.env.get("GROQ_API_KEY");
   const resendApiKey = Deno.env.get("RESEND_API_KEY");
   const emailFrom =
-    Deno.env.get("EMAIL_FROM") || "HelpMeBusiness <onboarding@resend.dev>";
+    Deno.env.get("EMAIL_FROM") || "HelpMeBusiness <hello@helpme.business>";
 
   if (!groqApiKey || !resendApiKey) {
     console.error("[HMB] Missing GROQ_API_KEY or RESEND_API_KEY");

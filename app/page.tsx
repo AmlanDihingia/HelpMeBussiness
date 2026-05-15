@@ -5,11 +5,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { SparkQuiz } from '@/components/SparkQuiz';
 import { ServicesSection } from '@/components/ServicesSection';
-import { FreeConsultationForm } from '@/components/FreeConsultationForm';
+import { BusinessValidator } from '@/components/BusinessValidator';
 
 export default function Home() {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
-  const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+  const [isValidatorOpen, setIsValidatorOpen] = useState(false);
 
   return (
     <div className="min-h-screen relative flex flex-col">
@@ -37,7 +37,7 @@ export default function Home() {
           <a href="#services" className="hover:text-zinc-900 transition-colors">Services</a>
         </nav>
         <div className="flex items-center gap-2">
-          <Button variant="primary" size="sm" onClick={() => setIsConsultationOpen(true)}>Validate Your Business</Button>
+          <Button variant="primary" size="sm" onClick={() => setIsValidatorOpen(true)}>Validate Your Business</Button>
         </div>
       </header>
 
@@ -46,34 +46,26 @@ export default function Home() {
         {/* Hero Section */}
         <section className="w-full max-w-4xl text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tighter leading-[1.1]">
-            You bring the money.<br />
-            <span className="text-gradient">We bring the clarity.</span>
+            Don&apos;t burn money on the<br />
+            <span className="text-gradient">wrong business.</span>
           </h1>
 
-          <p className="text-lg md:text-xl lg:text-2xl text-zinc-600 max-w-2xl mx-auto font-light leading-relaxed">
-            Before you invest ₹1 lakh, invest <strong className="text-zinc-900">₹999</strong> in clarity. Stop guessing and start building with precision.
+          <p className="text-lg md:text-xl lg:text-2xl text-zinc-600 max-w-3xl lg:max-w-4xl mx-auto font-light leading-relaxed">
+            Validate your idea, pricing, and revenue model before you invest big.<br />
+            <strong className="text-zinc-900">₹999</strong> now can save you lakhs later.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 flex-wrap">
-            <Button size="lg" onClick={() => setIsQuizOpen(true)} className="group w-full sm:w-auto">
-              Get Clarity Now — ₹999
-              <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            <Button size="lg" onClick={() => setIsValidatorOpen(true)} className="group w-full sm:w-auto text-base">
+              Validate My Business
             </Button>
             <Button
-              onClick={() => setIsConsultationOpen(true)}
+              onClick={() => setIsQuizOpen(true)}
               variant="secondary"
               size="lg"
-              className="w-full sm:w-auto"
+              className="group w-full sm:w-auto text-base"
             >
-              Validate Your Business
-            </Button>
-            <Button
-              onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-              variant="secondary"
-              size="lg"
-              className="w-full sm:w-auto"
-            >
-              View All Services
+              Get Clarity — ₹999
             </Button>
           </div>
         </section>
@@ -86,7 +78,7 @@ export default function Home() {
       </main>
 
       {isQuizOpen && <SparkQuiz onClose={() => setIsQuizOpen(false)} />}
-      {isConsultationOpen && <FreeConsultationForm onClose={() => setIsConsultationOpen(false)} />}
+      {isValidatorOpen && <BusinessValidator onClose={() => setIsValidatorOpen(false)} />}
     </div>
   );
 }

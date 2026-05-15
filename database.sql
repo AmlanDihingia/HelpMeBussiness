@@ -104,3 +104,28 @@ CREATE POLICY "Allow anonymous inserts" ON public.orders FOR INSERT WITH CHECK (
 ALTER TABLE public.consultations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow anonymous inserts" ON public.consultations FOR INSERT WITH CHECK (true);
 */
+
+-- ============================================================
+-- TABLE: business_validators
+-- Stores data submitted via the 12-screen Business Validator
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.business_validators (
+    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at          TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    lead_id             UUID NOT NULL REFERENCES public.leads(id) ON DELETE CASCADE,
+    designation         TEXT,
+    business_vintage    TEXT,
+    business_type       TEXT,
+    location            TEXT,
+    monthly_revenue     TEXT,
+    monthly_customers   TEXT,
+    revenue_concentration TEXT,
+    buying_pattern      TEXT,
+    repeat_customers    TEXT,
+    customer_source     TEXT,
+    follow_up_system    TEXT,
+    tracking            TEXT
+);
+
+ALTER TABLE public.business_validators DISABLE ROW LEVEL SECURITY;
+
