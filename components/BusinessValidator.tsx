@@ -1,11 +1,36 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, ArrowRight, CheckCircle2, User, Mail, Phone, Briefcase, Calendar } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, CheckCircle2, User, Mail, Phone, Briefcase, Calendar, Activity, Sparkles } from 'lucide-react';
 import { submitValidatorAction, ValidatorData } from '@/app/actions/submit-validator';
 
-const SCROLL_TO_TOP = () => {
-    // Optional utility to scroll within modal if needed
+// ─── Phase config (maps to the 3 step-circle indicators) ──────────────────────
+const PHASES = [
+    { id: 1, label: 'Business Profile' },
+    { id: 2, label: 'Operations' },
+    { id: 3, label: 'Your Report' },
+];
+
+function getActivePhase(step: number): number {
+    if (step >= 1 && step <= 5) return 1;
+    if (step >= 6 && step <= 10) return 2;
+    if (step >= 11) return 3;
+    return 0;
+}
+
+// ─── Step meta ─────────────────────────────────────────────────────────────────
+const STEP_META: Record<number, { title: string; subtitle: string }> = {
+    1:  { title: 'Business Info',         subtitle: 'Tell us about your business' },
+    2:  { title: 'Location',              subtitle: 'Where is your business based?' },
+    3:  { title: 'Monthly Revenue',       subtitle: "What's your current monthly revenue?" },
+    4:  { title: 'Monthly Customers',     subtitle: 'Approximate customers you serve per month' },
+    5:  { title: 'Revenue Concentration', subtitle: 'How distributed is your revenue?' },
+    6:  { title: 'Buying Pattern',        subtitle: 'How do customers usually buy from you?' },
+    7:  { title: 'Repeat Customers',      subtitle: 'How often do customers come back?' },
+    8:  { title: 'Customer Source',       subtitle: 'Where do most of your customers come from?' },
+    9:  { title: 'Follow-up System',      subtitle: 'What happens after someone shows interest?' },
+    10: { title: 'Drop-off Tracking',     subtitle: 'Do you track where customers drop off?' },
+    12: { title: 'Analysis Complete',     subtitle: 'Enter your details to receive your business report' },
 };
 
 export function BusinessValidator({ onClose }: { onClose: () => void }) {
@@ -13,6 +38,7 @@ export function BusinessValidator({ onClose }: { onClose: () => void }) {
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const [loadingText, setLoadingText] = useState('Mapping your revenue structure...');
 
     const [formData, setFormData] = useState<ValidatorData>({
         businessType: '',
@@ -30,43 +56,40 @@ export function BusinessValidator({ onClose }: { onClose: () => void }) {
         designation: '',
         email: '',
         phone: '',
-        businessVintage: ''
+        businessVintage: '',
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    // Animation for Step 11
-    const [loadingText, setLoadingText] = useState('Mapping your revenue structure');
+    // Loading animation for step 11
     useEffect(() => {
         if (step === 11) {
             const texts = [
                 'Mapping your revenue structure...',
                 'Identifying conversion gaps...',
-                'Checking system dependencies...'
+                'Checking system dependencies...',
             ];
             let i = 0;
             const interval = setInterval(() => {
                 i = (i + 1) % texts.length;
                 setLoadingText(texts[i]);
             }, 1000);
-
-            const timer = setTimeout(() => {
-                clearInterval(interval);
-                setStep(12);
-            }, 3000);
-
-            return () => {
-                clearInterval(interval);
-                clearTimeout(timer);
-            };
+            const timer = setTimeout(() => { clearInterval(interval); setStep(12); }, 3000);
+            return () => { clearInterval(interval); clearTimeout(timer); };
         }
     }, [step]);
 
-    const handleSelect = (field: keyof ValidatorData, value: string, nextStep: boolean = true) => {
+    // ─── Handlers ────────────────────────────────────────────────────────────
+    const handleSelect = (field: keyof ValidatorData, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        if (nextStep) {
-            setTimeout(() => setStep(s => s + 1), 150); // slight delay for visual feedback
+        // Auto-advance for option steps (not text inputs)
+        if (step !== 1 || (field !== 'customBusinessDescription')) {
+            setTimeout(() => setStep(s => s + 1), 180);
         }
+    };
+
+    const handleBack = () => {
+        if (step > 1) setStep(s => s - 1);
     };
 
     const validateFinalStep = () => {
@@ -74,72 +97,51 @@ export function BusinessValidator({ onClose }: { onClose: () => void }) {
         if (!formData.fullName.trim()) e.fullName = 'Required';
         if (!formData.designation.trim()) e.designation = 'Required';
         if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Valid email required';
-        if (!formData.businessVintage.trim()) e.businessVintage = 'Required';
+        if (!formData.businessVintage) e.businessVintage = 'Required';
         setErrors(e);
         return Object.keys(e).length === 0;
     };
 
     const handleSubmit = async () => {
         if (!validateFinalStep()) return;
-
         setIsLoading(true);
         setSubmitError(null);
-
         try {
             const result = await submitValidatorAction(formData);
-
-            if (result.success) {
-                setIsSuccess(true);
-            } else {
-                setSubmitError(result.error || 'Something went wrong. Please try again.');
-            }
+            if (result.success) setIsSuccess(true);
+            else setSubmitError(result.error || 'Something went wrong. Please try again.');
         } catch (err: any) {
-            console.error('[HMB] Submission failed:', err);
-            let friendlyError = err.message || 'Something went wrong. Please try again.';
-            if (friendlyError.includes('fetch') || (err.message && err.message.includes('fetch'))) {
-                friendlyError = "Network error: The server could not reach Supabase. This should work in production if environment variables are set.";
-            }
-            setSubmitError(friendlyError);
+            setSubmitError(err.message || 'Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
 
+    // ─── Styles ───────────────────────────────────────────────────────────────
     const inputClass = (field: string) =>
-        `w-full bg-white border ${errors[field] ? 'border-red-500' : 'border-zinc-300'} rounded-2xl px-4 py-3 md:py-3.5 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm`;
+        `w-full bg-white border ${errors[field] ? 'border-red-400' : 'border-zinc-200'} rounded-xl px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-200 text-sm`;
 
-    const labelClass = "block text-xs font-medium text-zinc-600 mb-1.5 ml-1 flex items-center gap-1.5";
+    const labelClass = 'block text-xs font-semibold text-cyan-600 mb-1.5 ml-0.5 flex items-center gap-1.5';
 
-    if (isSuccess) {
-        return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
-                <div className="w-full max-w-md bg-white rounded-3xl border border-zinc-200 shadow-xl p-6 md:p-8 text-center relative">
-                    <button onClick={onClose} className="absolute right-6 top-6 text-zinc-400 hover:text-zinc-700"><X size={20} /></button>
-                    <div className="w-16 h-16 bg-blue-50 border border-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle2 className="text-blue-500 w-8 h-8" />
-                    </div>
-                    <h2 className="text-xl md:text-2xl font-bold text-zinc-900 mb-2">Report Sent!</h2>
-                    <p className="text-zinc-600 text-sm leading-relaxed mb-6 md:mb-8">
-                        Thank you for sharing your business details. Your validation report is on its way to your inbox. Our experts will review your responses and reach out shortly.
-                    </p>
-                    <button onClick={onClose} className="w-full py-3.5 rounded-2xl bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 text-sm font-semibold hover:bg-zinc-800 transition-all">
-                        Return to site
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    const OptionButton = ({ label, field, value }: { label: string, field: keyof ValidatorData, value?: string }) => {
-        const val = value || label;
+    // ─── Option button (select + auto-advance) ────────────────────────────────
+    const OptionButton = ({ label, field, value, noAutoAdvance }: {
+        label: string;
+        field: keyof ValidatorData;
+        value?: string;
+        noAutoAdvance?: boolean;
+    }) => {
+        const val = value ?? label;
         const isSelected = formData[field] === val;
         return (
             <button
-                onClick={() => handleSelect(field, val)}
-                className={`w-full text-left px-5 py-4 rounded-2xl border-2 transition-all duration-200 font-medium text-sm md:text-base ${
-                    isSelected 
-                    ? 'border-blue-500 bg-blue-50 text-blue-900 shadow-sm' 
-                    : 'border-zinc-200 bg-white text-zinc-700 hover:border-blue-200 hover:bg-blue-50/50'
+                onClick={() => {
+                    setFormData(prev => ({ ...prev, [field]: val }));
+                    if (!noAutoAdvance) setTimeout(() => setStep(s => s + 1), 180);
+                }}
+                className={`w-full text-left px-5 py-4 rounded-xl border-2 font-medium text-sm transition-all duration-200 ${
+                    isSelected
+                        ? 'border-cyan-400 bg-cyan-50 text-cyan-900 shadow-sm'
+                        : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50'
                 }`}
             >
                 {label}
@@ -147,297 +149,360 @@ export function BusinessValidator({ onClose }: { onClose: () => void }) {
         );
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-md">
-            <div className="w-full max-w-lg bg-white rounded-3xl border border-zinc-200 shadow-xl flex flex-col max-h-[90dvh] md:max-h-[85vh] overflow-hidden transition-all duration-300 relative">
-                
-                {/* Close Button */}
-                {(step < 11 || step === 12) && (
-                    <button onClick={onClose} className="absolute right-5 top-5 p-2 z-10 bg-white rounded-full hover:bg-zinc-100 transition-colors text-zinc-400 hover:text-zinc-700 shadow-sm border border-zinc-100">
-                        <X size={18} />
+    // ─── Success screen ───────────────────────────────────────────────────────
+    if (isSuccess) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+                <div className="w-full max-w-md bg-white rounded-3xl border border-zinc-200 shadow-2xl p-8 text-center relative animate-in zoom-in-95 fade-in duration-300">
+                    <button onClick={onClose} className="absolute right-5 top-5 p-1.5 text-zinc-400 hover:text-zinc-700 rounded-lg hover:bg-zinc-100 transition-all"><X size={18} /></button>
+                    <div className="w-16 h-16 bg-cyan-50 border border-cyan-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <CheckCircle2 className="text-cyan-500 w-8 h-8" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-zinc-900 mb-2">Report Sent!</h2>
+                    <p className="text-zinc-500 text-sm leading-relaxed mb-7">
+                        Your validation report is on its way to your inbox. Our experts will review your responses and reach out shortly.
+                    </p>
+                    <button onClick={onClose} className="w-full py-3.5 rounded-xl bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 active:scale-95 transition-all duration-200">
+                        Return to site
                     </button>
+                </div>
+            </div>
+        );
+    }
+
+    // ─── Step header (phase circles) ──────────────────────────────────────────
+    const activePhase = getActivePhase(step);
+    const meta = STEP_META[step];
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="w-full max-w-lg bg-white rounded-3xl border border-zinc-200 shadow-2xl flex flex-col max-h-[92dvh] overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+
+                {/* ── Gradient accent line ── */}
+                {step > 0 && step !== 11 && (
+                    <div className="h-[3px] w-full bg-gradient-to-r from-violet-500 via-cyan-400 to-blue-500 flex-shrink-0" />
                 )}
 
-                {/* Progress Indicator (Steps 1-10) */}
-                {step > 0 && step <= 10 && (
-                    <div className="pt-6 px-6 pb-2">
-                        <p className="text-center text-xs font-semibold tracking-wider text-zinc-400 uppercase">
-                            Step {step} of 10
-                        </p>
-                        <div className="h-1 bg-zinc-100 rounded-full mt-3 overflow-hidden">
-                        <div className="h-full bg-blue-500 transition-all duration-300 ease-out" style={{ width: `${(step / 10) * 100}%` }} />
+                {/* ── Header ── */}
+                {step === 0 || step === 11 ? null : (
+                    <div className="px-6 pt-5 pb-3 flex-shrink-0">
+                        {/* Close */}
+                        <button
+                            onClick={onClose}
+                            className="absolute right-5 top-5 p-1.5 text-zinc-400 hover:text-zinc-700 rounded-lg hover:bg-zinc-100 transition-all z-10"
+                        >
+                            <X size={18} />
+                        </button>
+
+                        {/* Phase step indicators */}
+                        <div className="flex items-center gap-1 mb-4">
+                            {PHASES.map((phase, i) => (
+                                <div key={phase.id} className="flex items-center gap-1">
+                                    {/* Circle — no numbers, just dot indicators */}
+                                    <div className={`rounded-full transition-all duration-300 ${
+                                        activePhase > phase.id
+                                            ? 'w-2.5 h-2.5 bg-cyan-500'
+                                            : activePhase === phase.id
+                                                ? 'w-3 h-3 bg-zinc-900 ring-4 ring-zinc-900/10'
+                                                : 'w-2.5 h-2.5 bg-zinc-200'
+                                    }`} />
+                                    {/* Connecting line */}
+                                    {i < PHASES.length - 1 && (
+                                        <div className={`flex-1 h-px w-10 transition-all duration-500 ${activePhase > phase.id ? 'bg-cyan-400' : 'bg-zinc-200'}`} />
+                                    )}
+                                </div>
+                            ))}
                         </div>
+
+                        {/* Title + subtitle */}
+                        {meta && (
+                            <div>
+                                <h2 className="text-lg font-bold text-zinc-900 leading-snug">{meta.title}</h2>
+                                <p className="text-sm text-zinc-500 mt-0.5">{meta.subtitle}</p>
+                            </div>
+                        )}
                     </div>
                 )}
 
-                {/* Body Content */}
-                <div className="flex-1 overflow-y-auto px-6 py-6 md:py-8 scrollbar-hide">
-                    
-                    {/* SCREEN 0 - ENTRY */}
+                {/* ── Scrollable body ── */}
+                <div className="flex-1 overflow-y-auto px-6 pb-4 scrollbar-thin">
+
+                    {/* SCREEN 0 — entry */}
                     {step === 0 && (
-                        <div className="h-full flex flex-col items-center justify-center text-center space-y-6 pt-8">
-                            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-2">
-                                <span className="text-2xl">📊</span>
+                        <div className="h-full flex flex-col items-center justify-center text-center space-y-5 py-10">
+                            <button onClick={onClose} className="absolute right-5 top-5 p-1.5 text-zinc-400 hover:text-zinc-700 rounded-lg hover:bg-zinc-100 transition-all"><X size={18} /></button>
+                            <div className="w-14 h-14 bg-zinc-50 border border-zinc-200 rounded-2xl flex items-center justify-center">
+                                <Activity className="w-7 h-7 text-cyan-500" />
                             </div>
-                            <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 tracking-tight leading-tight">
-                                Let’s understand your business.
-                            </h2>
-                            <p className="text-zinc-500 text-lg">
-                                Takes ~2 minutes. No fluff.
-                            </p>
-                            <div className="pt-8 w-full max-w-xs">
-                                <button onClick={() => setStep(1)} className="w-full py-4 rounded-2xl bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 text-base font-semibold hover:bg-zinc-800 hover:scale-[1.02] active:scale-95 transition-all duration-200">
-                                    👉 Start Analysis
-                                </button>
+                            <div>
+                                <h2 className="text-2xl font-bold text-zinc-900 leading-tight">
+                                    Let&apos;s understand your<br />business
+                                </h2>
+                                <p className="text-zinc-500 text-sm mt-2">A brief professional assessment to tailor our solutions.</p>
                             </div>
+                            <button
+                                onClick={() => setStep(1)}
+                                className="mt-4 w-full max-w-xs py-3.5 flex items-center justify-center gap-2 rounded-xl bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 active:scale-95 transition-all duration-200 shadow-sm"
+                            >
+                                Start Analysis <ArrowRight size={16} />
+                            </button>
                         </div>
                     )}
 
-                    {/* SCREEN 1 - TYPE OF BUSINESS */}
+                    {/* SCREEN 1 — type of business */}
                     {step === 1 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">What kind of business are you running?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="D2C / Brand" field="businessType" />
-                                <OptionButton label="Retail" field="businessType" />
-                                <OptionButton label="Hospitality" field="businessType" />
-                                <OptionButton label="B2B / Services" field="businessType" />
-                                <OptionButton label="Other" field="businessType" value="Other" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="D2C / Brand"     field="businessType" />
+                            <OptionButton label="Retail"          field="businessType" />
+                            <OptionButton label="Hospitality"     field="businessType" />
+                            <OptionButton label="B2B / Services"  field="businessType" />
+                            <OptionButton label="Other"           field="businessType" value="Other" noAutoAdvance />
                             {formData.businessType === 'Other' && (
-                                <div className="pt-2 space-y-3 animate-in fade-in slide-in-from-top-2">
-                                    <label className="block text-sm font-medium text-zinc-700">Briefly describe your business:</label>
-                                    <input 
-                                        type="text" 
+                                <div className="pt-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <label className={labelClass}>Describe your business</label>
+                                    <input
+                                        type="text"
                                         autoFocus
-                                        className={inputClass('customBusinessDescription')} 
-                                        value={formData.customBusinessDescription} 
-                                        onChange={e => setFormData({ ...formData, customBusinessDescription: e.target.value })} 
-                                        placeholder="e.g. Real Estate Tech" 
+                                        className={inputClass('customBusinessDescription')}
+                                        value={formData.customBusinessDescription}
+                                        onChange={e => setFormData({ ...formData, customBusinessDescription: e.target.value })}
+                                        placeholder="e.g. Real Estate Tech"
+                                        onKeyDown={e => e.key === 'Enter' && formData.customBusinessDescription.trim() && setStep(2)}
                                     />
-                                    <button onClick={() => setStep(2)} className="w-full py-3.5 rounded-2xl bg-blue-600 text-white font-semibold">Continue →</button>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    {/* SCREEN 2 - LOCATION */}
+                    {/* SCREEN 2 — location */}
                     {step === 2 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300 h-full flex flex-col justify-center">
-                            <h2 className="text-2xl font-bold text-zinc-900 mb-2">Where is your business based?</h2>
-                            <input 
-                                type="text" 
+                        <div className="pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <label className={labelClass}>
+                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                City or Region
+                            </label>
+                            <input
+                                type="text"
                                 autoFocus
-                                className="w-full text-2xl bg-transparent border-b-2 border-zinc-200 px-2 py-4 focus:outline-none focus:border-blue-500 transition-colors placeholder-zinc-300"
-                                value={formData.location} 
-                                onChange={e => setFormData({ ...formData, location: e.target.value })} 
-                                placeholder="City or Region" 
-                                onKeyDown={e => e.key === 'Enter' && formData.location && setStep(3)}
+                                className={inputClass('location')}
+                                value={formData.location}
+                                onChange={e => setFormData({ ...formData, location: e.target.value })}
+                                placeholder="e.g. Mumbai, Delhi, Bangalore"
+                                onKeyDown={e => e.key === 'Enter' && formData.location.trim() && setStep(3)}
                             />
-                            <div className="pt-6">
-                                <button disabled={!formData.location} onClick={() => setStep(3)} className="w-full py-4 rounded-2xl bg-zinc-900 text-white font-semibold disabled:opacity-50 transition-all">
-                                    Next
-                                </button>
-                            </div>
                         </div>
                     )}
 
-                    {/* SCREEN 3 - MONTHLY REVENUE */}
+                    {/* SCREEN 3 — monthly revenue */}
                     {step === 3 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">What’s your current monthly revenue?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="Under ₹5L" field="monthlyRevenue" />
-                                <OptionButton label="₹5L–₹15L" field="monthlyRevenue" />
-                                <OptionButton label="₹15L–₹30L" field="monthlyRevenue" />
-                                <OptionButton label="₹30L–₹50L" field="monthlyRevenue" />
-                                <OptionButton label="₹50L+" field="monthlyRevenue" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Under ₹5L"   field="monthlyRevenue" />
+                            <OptionButton label="₹5L–₹15L"   field="monthlyRevenue" />
+                            <OptionButton label="₹15L–₹30L"  field="monthlyRevenue" />
+                            <OptionButton label="₹30L–₹50L"  field="monthlyRevenue" />
+                            <OptionButton label="₹50L+"       field="monthlyRevenue" />
                         </div>
                     )}
 
-                    {/* SCREEN 4 - MONTHLY CUSTOMERS */}
+                    {/* SCREEN 4 — monthly customers */}
                     {step === 4 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">How many customers do you serve monthly?</h2>
-                            <p className="text-zinc-500 mt-[-16px] text-sm">(approximate)</p>
-                            <div className="space-y-3">
-                                <OptionButton label="Under 100" field="monthlyCustomers" />
-                                <OptionButton label="100–500" field="monthlyCustomers" />
-                                <OptionButton label="500–1000" field="monthlyCustomers" />
-                                <OptionButton label="1000+" field="monthlyCustomers" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Under 100"  field="monthlyCustomers" />
+                            <OptionButton label="100–500"    field="monthlyCustomers" />
+                            <OptionButton label="500–1000"   field="monthlyCustomers" />
+                            <OptionButton label="1000+"      field="monthlyCustomers" />
                         </div>
                     )}
 
-                    {/* SCREEN 5 - REVENUE CONCENTRATION */}
+                    {/* SCREEN 5 — revenue concentration */}
                     {step === 5 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">How much of your revenue comes from a few products/services?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="Less than 30%" field="revenueConcentration" />
-                                <OptionButton label="30–60%" field="revenueConcentration" />
-                                <OptionButton label="60–80%" field="revenueConcentration" />
-                                <OptionButton label="80%+" field="revenueConcentration" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Less than 30%"  field="revenueConcentration" />
+                            <OptionButton label="30–60%"         field="revenueConcentration" />
+                            <OptionButton label="60–80%"         field="revenueConcentration" />
+                            <OptionButton label="80%+"           field="revenueConcentration" />
                         </div>
                     )}
 
-                    {/* SCREEN 6 - BUYING PATTERN */}
+                    {/* SCREEN 6 — buying pattern */}
                     {step === 6 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">How do customers usually buy from you?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="Single purchase" field="buyingPattern" />
-                                <OptionButton label="Bundles / combos" field="buyingPattern" />
-                                <OptionButton label="Custom pricing" field="buyingPattern" />
-                                <OptionButton label="Not structured" field="buyingPattern" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Single purchase"  field="buyingPattern" />
+                            <OptionButton label="Bundles / combos" field="buyingPattern" />
+                            <OptionButton label="Custom pricing"   field="buyingPattern" />
+                            <OptionButton label="Not structured"   field="buyingPattern" />
                         </div>
                     )}
 
-                    {/* SCREEN 7 - REPEAT CUSTOMERS */}
+                    {/* SCREEN 7 — repeat customers */}
                     {step === 7 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">How often do customers come back?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="Frequently" field="repeatCustomers" />
-                                <OptionButton label="Sometimes" field="repeatCustomers" />
-                                <OptionButton label="Rarely" field="repeatCustomers" />
-                                <OptionButton label="Not tracked" field="repeatCustomers" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Frequently"   field="repeatCustomers" />
+                            <OptionButton label="Sometimes"    field="repeatCustomers" />
+                            <OptionButton label="Rarely"       field="repeatCustomers" />
+                            <OptionButton label="Not tracked"  field="repeatCustomers" />
                         </div>
                     )}
 
-                    {/* SCREEN 8 - CUSTOMER SOURCE */}
+                    {/* SCREEN 8 — customer source */}
                     {step === 8 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">Where do most of your customers come from?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="Instagram" field="customerSource" />
-                                <OptionButton label="Ads" field="customerSource" />
-                                <OptionButton label="Walk-ins" field="customerSource" />
-                                <OptionButton label="Referrals" field="customerSource" />
-                                <OptionButton label="Marketplace" field="customerSource" />
-                                <OptionButton label="Mix" field="customerSource" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Instagram"    field="customerSource" />
+                            <OptionButton label="Ads"          field="customerSource" />
+                            <OptionButton label="Walk-ins"     field="customerSource" />
+                            <OptionButton label="Referrals"    field="customerSource" />
+                            <OptionButton label="Marketplace"  field="customerSource" />
+                            <OptionButton label="Mix"          field="customerSource" />
                         </div>
                     )}
 
-                    {/* SCREEN 9 - FOLLOW-UP SYSTEM */}
+                    {/* SCREEN 9 — follow-up system */}
                     {step === 9 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">What happens after someone shows interest?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="Structured follow-up" field="followUpSystem" />
-                                <OptionButton label="Manual follow-up" field="followUpSystem" />
-                                <OptionButton label="Depends on team" field="followUpSystem" />
-                                <OptionButton label="No clear process" field="followUpSystem" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Structured follow-up" field="followUpSystem" />
+                            <OptionButton label="Manual follow-up"     field="followUpSystem" />
+                            <OptionButton label="Depends on team"      field="followUpSystem" />
+                            <OptionButton label="No clear process"     field="followUpSystem" />
                         </div>
                     )}
 
-                    {/* SCREEN 10 - TRACKING */}
+                    {/* SCREEN 10 — tracking */}
                     {step === 10 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                            <h2 className="text-2xl font-bold text-zinc-900">Do you track where customers drop off?</h2>
-                            <div className="space-y-3">
-                                <OptionButton label="Yes (clearly)" field="tracking" />
-                                <OptionButton label="Somewhat" field="tracking" />
-                                <OptionButton label="No" field="tracking" />
-                            </div>
+                        <div className="space-y-2.5 pt-3 animate-in slide-in-from-right-4 fade-in duration-200">
+                            <OptionButton label="Yes (clearly)" field="tracking" />
+                            <OptionButton label="Somewhat"      field="tracking" />
+                            <OptionButton label="No"            field="tracking" />
                         </div>
                     )}
 
-                    {/* SCREEN 11 - ANALYSIS */}
+                    {/* SCREEN 11 — analyzing */}
                     {step === 11 && (
-                        <div className="h-full flex flex-col items-center justify-center text-center space-y-8 py-12">
-                            <div className="relative w-24 h-24">
-                                <svg className="w-full h-full animate-spin text-blue-500" viewBox="0 0 100 100">
-                                    <circle className="opacity-20" cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" />
-                                    <circle className="opacity-100" cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" strokeDasharray="283" strokeDashoffset="75" strokeLinecap="round" />
+                        <div className="h-full flex flex-col items-center justify-center text-center space-y-6 py-16">
+                            <div className="relative w-20 h-20">
+                                <svg className="w-full h-full animate-spin text-cyan-500" viewBox="0 0 100 100">
+                                    <circle className="opacity-10" cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" />
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" strokeDasharray="283" strokeDashoffset="75" strokeLinecap="round" />
                                 </svg>
                             </div>
                             <div>
-                                <h2 className="text-3xl font-bold text-zinc-900 mb-4">Analyzing your business…</h2>
-                                <div className="h-8">
-                                    <p className="text-blue-600 font-medium text-lg animate-in fade-in slide-in-from-bottom-2 key={loadingText}">{loadingText}</p>
-                                </div>
+                                <h2 className="text-2xl font-bold text-zinc-900 mb-3">Analysing your business…</h2>
+                                <p className="text-cyan-600 font-medium text-sm">{loadingText}</p>
                             </div>
-                            <p className="text-zinc-500 text-sm mt-8">We’ve identified key patterns in your business.</p>
+                            <p className="text-zinc-400 text-xs">We&apos;ve identified key patterns in your business.</p>
                         </div>
                     )}
 
-                    {/* SCREEN 12 - REPORT UNLOCK */}
+                    {/* SCREEN 12 — contact form */}
                     {step === 12 && (
-                        <div className="space-y-6 animate-in slide-in-from-bottom-8 fade-in duration-500 py-2">
-                            <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                    <span className="text-2xl">🎉</span>
+                        <div className="space-y-4 pt-3 pb-2 animate-in slide-in-from-bottom-4 fade-in duration-300">
+                            {/* Icon */}
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="w-10 h-10 bg-cyan-50 border border-cyan-100 rounded-xl flex items-center justify-center">
+                                    <Sparkles className="w-5 h-5 text-cyan-500" />
                                 </div>
-                                <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">Your report is ready.</h2>
-                                <p className="text-zinc-500 mt-2">Enter your details to receive your business validation report.</p>
                             </div>
 
-                            <div className="space-y-4 bg-zinc-50/50 p-1 rounded-3xl">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className={labelClass}><User size={12} className="text-blue-500" /> Full Name</label>
-                                        <input type="text" className={inputClass('fullName')} value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} placeholder="John Doe" />
-                                        {errors.fullName && <p className="text-red-400 text-xs mt-1 ml-1">{errors.fullName}</p>}
-                                    </div>
-                                    <div>
-                                        <label className={labelClass}><Briefcase size={12} className="text-blue-500" /> Designation</label>
-                                        <input type="text" className={inputClass('designation')} value={formData.designation} onChange={e => setFormData({ ...formData, designation: e.target.value })} placeholder="Founder / CEO" />
-                                        {errors.designation && <p className="text-red-400 text-xs mt-1 ml-1">{errors.designation}</p>}
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className={labelClass}><Mail size={12} className="text-blue-500" /> Email</label>
-                                        <input type="email" className={inputClass('email')} value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="john@example.com" />
-                                        {errors.email && <p className="text-red-400 text-xs mt-1 ml-1">{errors.email}</p>}
-                                    </div>
-                                    <div>
-                                        <label className={labelClass}><Phone size={12} className="text-blue-500" /> Phone (Optional)</label>
-                                        <input type="tel" className={inputClass('phone')} value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="+91 99999 99999" />
-                                    </div>
-                                </div>
-
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label className={labelClass}><Calendar size={12} className="text-blue-500" /> Business Vintage</label>
-                                    <select className={`${inputClass('businessVintage')} appearance-none`} value={formData.businessVintage} onChange={e => setFormData({ ...formData, businessVintage: e.target.value })}>
-                                        <option value="" disabled>Select vintage...</option>
-                                        <option value="Idea">Idea</option>
-                                        <option value="Less than 6 months">Less than 6 months</option>
-                                        <option value="6–12 months">6–12 months</option>
-                                        <option value="1–3 years">1–3 years</option>
-                                        <option value="3+ years">3+ years</option>
-                                    </select>
-                                    {errors.businessVintage && <p className="text-red-400 text-xs mt-1 ml-1">{errors.businessVintage}</p>}
+                                    <label className={labelClass}><User size={11} /> Full Name</label>
+                                    <input type="text" className={inputClass('fullName')} value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} placeholder="John Doe" />
+                                    {errors.fullName && <p className="text-red-400 text-xs mt-1 ml-0.5">{errors.fullName}</p>}
                                 </div>
+                                <div>
+                                    <label className={labelClass}><Briefcase size={11} /> Designation</label>
+                                    <input type="text" className={inputClass('designation')} value={formData.designation} onChange={e => setFormData({ ...formData, designation: e.target.value })} placeholder="Founder / CEO" />
+                                    {errors.designation && <p className="text-red-400 text-xs mt-1 ml-0.5">{errors.designation}</p>}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label className={labelClass}><Mail size={11} /> Email</label>
+                                    <input type="email" className={inputClass('email')} value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="john@example.com" />
+                                    {errors.email && <p className="text-red-400 text-xs mt-1 ml-0.5">{errors.email}</p>}
+                                </div>
+                                <div>
+                                    <label className={labelClass}><Phone size={11} /> Phone (Optional)</label>
+                                    <input type="tel" className={inputClass('phone')} value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="+91 99999 99999" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className={labelClass}><Calendar size={11} /> Business Vintage</label>
+                                <select
+                                    className={`${inputClass('businessVintage')} appearance-none cursor-pointer`}
+                                    value={formData.businessVintage}
+                                    onChange={e => setFormData({ ...formData, businessVintage: e.target.value })}
+                                >
+                                    <option value="" disabled>Select vintage…</option>
+                                    <option value="Idea">Idea</option>
+                                    <option value="Less than 6 months">Less than 6 months</option>
+                                    <option value="6–12 months">6–12 months</option>
+                                    <option value="1–3 years">1–3 years</option>
+                                    <option value="3+ years">3+ years</option>
+                                </select>
+                                {errors.businessVintage && <p className="text-red-400 text-xs mt-1 ml-0.5">{errors.businessVintage}</p>}
+                            </div>
+
+                            {/* Privacy note */}
+                            <div className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+                                <svg className="w-4 h-4 text-cyan-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                <p className="text-xs text-zinc-500 leading-relaxed">
+                                    <span className="font-semibold text-cyan-600">100% Private.</span> Your details are only used to send your personalised report.
+                                </p>
                             </div>
 
                             {submitError && (
-                                <div className="bg-red-500/10 border border-red-500/30 rounded-2xl px-4 py-3 text-xs text-red-400 mt-2">
-                                    <strong className="text-red-300">⚠ Error:</strong> {submitError}
+                                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-xs text-red-600">
+                                    <strong>⚠ Error:</strong> {submitError}
                                 </div>
                             )}
-
-                            <div className="pt-4">
-                                <button onClick={handleSubmit} disabled={isLoading} className="w-full py-4 rounded-2xl bg-blue-600 text-white text-base font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 disabled:opacity-70 flex justify-center items-center gap-2">
-                                    {isLoading ? (
-                                        <><span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Processing…</>
-                                    ) : (
-                                        <>Get My Report</>
-                                    )}
-                                </button>
-                                <p className="text-center text-[10px] text-zinc-400 mt-3">We respect your privacy. No spam ever.</p>
-                            </div>
                         </div>
                     )}
+
                 </div>
+
+                {/* ── Footer ── */}
+                {(step >= 1 && step <= 10) || step === 12 ? (
+                    <div className="px-6 py-4 border-t border-zinc-100 flex gap-2.5 flex-shrink-0">
+                        {/* Back button */}
+                        {step > 1 && (
+                            <button
+                                onClick={handleBack}
+                                className="flex items-center gap-1.5 px-4 py-3 rounded-xl border border-zinc-200 text-zinc-600 text-sm font-medium hover:bg-zinc-50 hover:text-zinc-900 active:scale-95 transition-all duration-200"
+                            >
+                                <ArrowLeft size={15} /> Back
+                            </button>
+                        )}
+
+                        {/* Continue / Submit */}
+                        {step === 12 ? (
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isLoading}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-800 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-sm"
+                            >
+                                {isLoading ? (
+                                    <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Processing…</>
+                                ) : (
+                                    <>Get My Report <ArrowRight size={15} /></>
+                                )}
+                            </button>
+                        ) : (
+                            /* Continue button for steps that need explicit advance (location + custom biz) */
+                            (step === 2 || (step === 1 && formData.businessType === 'Other')) ? (
+                                <button
+                                    onClick={() => setStep(s => s + 1)}
+                                    disabled={step === 2 ? !formData.location.trim() : !formData.customBusinessDescription.trim()}
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 active:scale-95 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none shadow-sm"
+                                >
+                                    Continue <ArrowRight size={15} />
+                                </button>
+                            ) : null
+                        )}
+                    </div>
+                ) : null}
+
             </div>
         </div>
     );

@@ -252,7 +252,6 @@ function ServiceCard({ service, onQuizOpen }: { service: ServiceData; onQuizOpen
                         <h3 className="text-xl font-bold mt-1 leading-tight">{service.name}</h3>
                         {service.subtitle && <p className="text-zinc-600 text-xs mt-0.5">{service.subtitle}</p>}
                     </div>
-                    <span className={`text-2xl font-extrabold ${c.accent} shrink-0 ml-4`}>{service.price}</span>
                 </div>
 
                 {/* Best For */}
@@ -333,7 +332,6 @@ export function ServicesSection({ onQuizOpen }: { onQuizOpen: () => void }) {
                         <p className="text-zinc-600 text-sm mt-1">Low commitment. High value. Zero pressure.</p>
                     </div>
                     <div className="flex-1 h-px bg-zinc-200 ml-6 hidden md:block" />
-                    <span className="text-cyan-500 font-bold text-lg hidden md:block shrink-0">₹999 each</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {clarityServices.map((s) => (
@@ -351,7 +349,6 @@ export function ServicesSection({ onQuizOpen }: { onQuizOpen: () => void }) {
                         <p className="text-zinc-600 text-sm mt-1">Once clarity is achieved, we help you build.</p>
                     </div>
                     <div className="flex-1 h-px bg-zinc-200 ml-6 hidden md:block" />
-                    <span className="text-blue-500 font-bold text-lg hidden md:block shrink-0">₹4,999 – ₹12,999</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                     {buildServices.map((s) => (
@@ -369,7 +366,6 @@ export function ServicesSection({ onQuizOpen }: { onQuizOpen: () => void }) {
                         <p className="text-zinc-600 text-sm mt-1">For people serious about execution.</p>
                     </div>
                     <div className="flex-1 h-px bg-zinc-200 ml-6 hidden md:block" />
-                    <span className="text-zinc-900 font-bold text-lg hidden md:block shrink-0">₹24,999 – ₹34,999</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {highTicketServices.map((s) => (

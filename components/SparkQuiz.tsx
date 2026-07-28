@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, ArrowRight, ArrowLeft, CheckCircle2, Mail, Building2, Briefcase, Calendar, TrendingUp, AlertCircle, FileText, CreditCard } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, CheckCircle2, Mail, Building2, Briefcase, Calendar, TrendingUp, AlertCircle, FileText, CreditCard, Package, Settings, Lock, Lightbulb } from 'lucide-react';
 import { submitOrderAction } from '@/app/actions/submit-order';
 import { useRouter } from 'next/navigation';
 
@@ -9,7 +9,6 @@ const steps = [
     { id: 1, title: 'Business Info', description: 'Tell us about your business' },
     { id: 2, title: 'Business Details', description: 'Help us understand your scale' },
     { id: 3, title: 'Schedule Meeting', description: 'Pick a time that works' },
-    { id: 4, title: 'Pay & Confirm', description: 'Complete your booking' },
 ];
 
 export function SparkQuiz({ onClose }: { onClose: () => void }) {
@@ -49,12 +48,11 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
     const handleNext = () => {
         if (step === 1 && validateStep1()) { setErrors({}); setStep(2); }
         else if (step === 2 && validateStep2()) { setErrors({}); setStep(3); }
-        else if (step === 3) { setErrors({}); setStep(4); }
     };
 
     const handleBack = () => { setErrors({}); setStep(s => s - 1); };
 
-    const handlePayment = async () => {
+    const handleConfirm = async () => {
         setIsLoading(true);
         await new Promise(r => setTimeout(r, 1500));
         const fd = new FormData();
@@ -62,7 +60,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
         fd.append('email', formData.businessEmail);
         fd.append('phone', '');
         fd.append('serviceName', 'Stage 1: Clarity - Idea Spark');
-        fd.append('amount', '999');
+        fd.append('amount', '0');
 
         const intakeData = {
             businessName: formData.businessName,
@@ -90,7 +88,7 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                 <div className="h-0.5 bg-zinc-100 flex-shrink-0">
                     <div
                         className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-500 ease-out"
-                        style={{ width: `${(step / 4) * 100}%` }}
+                        style={{ width: `${(step / 3) * 100}%` }}
                     />
                 </div>
 
@@ -171,18 +169,19 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                                             key={opt}
                                             type="button"
                                             onClick={() => setFormData({ ...formData, businessType: opt })}
-                                            className={`p-3.5 rounded-2xl border text-sm font-semibold text-center transition-all duration-200 ${formData.businessType === opt ? 'border-cyan-400/60 bg-cyan-400/10 text-cyan-400' : 'border-white/10 bg-white/3 text-zinc-600 hover:border-white/20 hover:text-zinc-300'}`}
+                                            className={`p-3.5 flex items-center justify-center gap-2 rounded-2xl border text-sm font-semibold text-center transition-all duration-200 ${formData.businessType === opt ? 'border-cyan-400 bg-cyan-50 text-cyan-700 shadow-sm' : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50'}`}
                                         >
-                                            {opt === 'Product' ? '📦' : '🛠️'} {opt}
+                                            {opt === 'Product' ? <Package size={16} /> : <Settings size={16} />} {opt}
                                         </button>
                                     ))}
                                 </div>
                                 {errors.businessType && <p className="text-red-400 text-[10px] md:text-xs mt-1.5 ml-1">{errors.businessType}</p>}
                             </div>
 
-                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 mt-2">
+                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 mt-2 flex gap-2">
+                                <Lock className="text-cyan-600 w-4 h-4 shrink-0 mt-0.5" />
                                 <p className="text-zinc-600 text-[10px] md:text-xs leading-relaxed">
-                                    <span className="text-cyan-600 font-medium">🔒 100% Private.</span> Your business details are only used to personalise your clarity session.
+                                    <span className="text-cyan-600 font-medium">100% Private.</span> Your business details are only used to personalise your clarity session.
                                 </p>
                             </div>
                         </div>
@@ -268,59 +267,12 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                                     title="Schedule Meeting"
                                 />
                             </div>
-                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-3">
+                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-3 flex items-center justify-center gap-2">
+                                <Lightbulb className="text-amber-500 w-4 h-4 shrink-0" />
                                 <p className="text-zinc-500 text-[10px] md:text-xs leading-relaxed text-center">
-                                    💡 You can also schedule later — proceed to payment to lock your slot.
+                                    Once you book a slot, we&apos;ll be in touch to confirm your session.
                                 </p>
                             </div>
-                        </div>
-                    )}
-
-                    {/* Step 4: Pay & Confirm */}
-                    {step === 4 && (
-                        <div className="space-y-4 md:space-y-5">
-                            <div className="text-center py-2 md:py-4">
-                                <div className="w-12 h-12 md:w-14 md:h-14 bg-cyan-50 border border-cyan-100 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
-                                    <CheckCircle2 className="text-cyan-500 w-6 h-6 md:w-7 md:h-7" />
-                                </div>
-                                <h3 className="text-lg md:text-xl font-bold text-zinc-900">You&apos;re almost there!</h3>
-                                <p className="text-zinc-600 text-xs md:text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
-                                    Complete the ₹999 payment to confirm your clarity session.
-                                </p>
-                            </div>
-
-                            {/* Summary Card */}
-                            <div className="bg-white/4 border border-white/8 rounded-2xl divide-y divide-white/6 text-xs md:text-sm overflow-hidden">
-                                <div className="flex justify-between px-4 py-2.5 md:py-3">
-                                    <span className="text-zinc-600">Business</span>
-                                    <span className="text-white font-medium">{formData.businessName}</span>
-                                </div>
-                                <div className="flex justify-between px-4 py-2.5 md:py-3">
-                                    <span className="text-zinc-600">Type</span>
-                                    <span className="text-white font-medium">{formData.businessType}</span>
-                                </div>
-                                <div className="flex justify-between px-4 py-2.5 md:py-3">
-                                    <span className="text-zinc-400">Turnover</span>
-                                    <span className="text-white font-medium">{formData.turnover}</span>
-                                </div>
-                                <div className="flex justify-between px-4 py-2.5 md:py-3">
-                                    <span className="text-zinc-400">Challenge</span>
-                                    <span className="text-white font-medium truncate ml-4">{formData.challenge}</span>
-                                </div>
-                            </div>
-
-                            {/* Order Total */}
-                            <div className="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-100 rounded-2xl px-4 py-3 md:py-4 flex justify-between items-center shadow-sm">
-                                <div>
-                                    <div className="text-xs md:text-sm font-semibold text-zinc-900">Stage 1: Clarity Session</div>
-                                    <div className="text-[10px] md:text-xs text-zinc-600 mt-0.5">30-min 1:1 Session</div>
-                                </div>
-                                <div className="text-xl md:text-2xl font-extrabold text-cyan-600">₹999</div>
-                            </div>
-
-                            <p className="text-center text-zinc-600 text-[10px]">
-                                🔒 Secure payment · 100% satisfaction
-                            </p>
                         </div>
                     )}
                 </div>
@@ -336,26 +288,26 @@ export function SparkQuiz({ onClose }: { onClose: () => void }) {
                         </button>
                     )}
 
-                    {step < 4 ? (
+                    {step < 3 ? (
                         <button
                             onClick={handleNext}
                             className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 active:scale-95 transition-all duration-200"
                         >
-                            {step === 3 ? 'Proceed to Payment' : 'Continue'} <ArrowRight size={15} />
+                            Continue <ArrowRight size={15} />
                         </button>
                     ) : (
                         <button
-                            onClick={handlePayment}
+                            onClick={handleConfirm}
                             disabled={isLoading}
                             className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30 text-white text-sm font-bold hover:opacity-90 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
                         >
                             {isLoading ? (
                                 <>
-                                    <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                     Processing…
                                 </>
                             ) : (
-                                <><CreditCard size={16} /> Pay ₹999 &amp; Confirm</>
+                                <>Confirm Booking <ArrowRight size={15} /></>
                             )}
                         </button>
                     )}
